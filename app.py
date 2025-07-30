@@ -220,7 +220,7 @@ def compute_geom(data,
     return geo_info
 
 
-def wrap_images(img0, img1, geo_info, geom_type):
+def warp_images(img0, img1, geo_info, geom_type):
     img0 = img0[0].permute((1, 2, 0)).cpu().detach().numpy()[..., ::-1]
     img1 = img1[0].permute((1, 2, 0)).cpu().detach().numpy()[..., ::-1]
 
@@ -256,7 +256,7 @@ def wrap_images(img0, img1, geo_info, geom_type):
 
     plt.close(fig)
 
-    return img
+    return img, rectified_image0, rectified_image1
 
 
 def plot_images(imgs, titles=None, cmaps="gray", dpi=100, size=5, pad=0.5):
@@ -421,10 +421,17 @@ if __name__ == '__main__':
     cv2.imwrite(join(image_dir, f'{name0}_{name1}_match.png'), out[..., ::-1])
 
     geom_info = compute_geom(data)
-    wrapped_images = wrap_images(image0, image1, geom_info, "Homography")
-    cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp.png'), wrapped_images)
+    warpped_images, rectified_image0, rectified_image1 = warp_images(image0, image1, geom_info, "Homography")
+    cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp.png'), warpped_images)
 
     # Blend the images
-    # alpha = 0.6  # 60% opacity for the overlay
-    # result = cv2.addWeighted(wrap_img0, alpha, wrap_img1, 1 - alpha, 0)
-    # cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), wrapped_images)
+    rectified_image0 = (rectified_image0 * 255).astype(np.uint8)
+    rectified_image1 = (rectified_image1 * 255).astype(np.uint8)
+    rectified_image0 = cv2.cvtColor(rectified_image0, cv2.COLOR_BGR2BGRA)
+    rectified_image1 = cv2.cvtColor(rectified_image1, cv2.COLOR_BGR2BGRA)
+
+    alpha = 0.3  # 60% opacity for the overlay
+    result = cv2.addWeighted(rectified_image1, alpha, rectified_image0, 1 - alpha, 0)
+    cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), result)
+
+    #lat": 33.79897090354122, "lng": -117.8842594886441
