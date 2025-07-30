@@ -14,6 +14,8 @@ DEFAULT_MIN_NUM_MATCHES = 4
 DEFAULT_RANSAC_MAX_ITER = 10000
 DEFAULT_RANSAC_CONFIDENCE = 0.99999
 DEFAULT_RANSAC_REPROJ_THRESHOLD = 8
+# DEFAULT_RANSAC_METHOD = "USAC_MAGSAC"
+# DEFAULT_RANSAC_METHOD = "USAC_ACCURATE"
 DEFAULT_RANSAC_METHOD = "RANSAC"
 
 RANSAC_ZOO = {
@@ -92,7 +94,7 @@ def fast_make_matching_figure(data, b_id):
     out[sh: sh + h1, wx[2]: wx[3]] = color1
     mkpts0, mkpts1 = np.round(kpts0).astype(int), np.round(kpts1).astype(int)
     for (x0, y0), (x1, y1) in zip(mkpts0[inliers], mkpts1[inliers]):
-        c = (0, 255, 0)
+        c = (255, 255, 0)
         cv2.circle(out, (x0, y0 + sh), 3, c, -1, lineType=cv2.LINE_AA)
         cv2.circle(out, (x1 + margin + w0, y1 + sh), 3, c, -1, lineType=cv2.LINE_AA)
 
@@ -412,7 +414,7 @@ if __name__ == '__main__':
     })
 
     # save visualization
-    alpha = 0.5
+    alpha = 0.4
     out = fast_make_matching_figure(data, b_id=0)
     overlay = fast_make_matching_overlay(data, b_id=0)
     out = cv2.addWeighted(out, 1 - alpha, overlay, alpha, 0)
@@ -421,3 +423,8 @@ if __name__ == '__main__':
     geom_info = compute_geom(data)
     wrapped_images = wrap_images(image0, image1, geom_info, "Homography")
     cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp.png'), wrapped_images)
+
+    # Blend the images
+    # alpha = 0.6  # 60% opacity for the overlay
+    # result = cv2.addWeighted(wrap_img0, alpha, wrap_img1, 1 - alpha, 0)
+    # cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), wrapped_images)
