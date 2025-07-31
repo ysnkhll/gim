@@ -9,14 +9,11 @@ from os.path import join
 from tools import get_padding_size
 from networks.dkm.models.model_zoo.DKMv3 import DKMv3
 
-
 DEFAULT_MIN_NUM_MATCHES = 4
 DEFAULT_RANSAC_MAX_ITER = 10000
+DEFAULT_RANSAC_METHOD = "RANSAC"
 DEFAULT_RANSAC_CONFIDENCE = 0.99999
 DEFAULT_RANSAC_REPROJ_THRESHOLD = 8
-# DEFAULT_RANSAC_METHOD = "USAC_MAGSAC"
-# DEFAULT_RANSAC_METHOD = "USAC_ACCURATE"
-DEFAULT_RANSAC_METHOD = "RANSAC"
 
 RANSAC_ZOO = {
     "RANSAC": cv2.RANSAC,
@@ -28,7 +25,6 @@ RANSAC_ZOO = {
     "USAC_ACCURATE": cv2.USAC_ACCURATE,
     "USAC_PARALLEL": cv2.USAC_PARALLEL,
 }
-
 
 def read_image(path, grayscale=False):
     if grayscale:
@@ -313,9 +309,6 @@ if __name__ == '__main__':
     # width, height = 672, 896
 
     # load model
-    ckpt = None
-    model = None
-
     ckpt = 'gim_dkm_100h.ckpt'
     model = DKMv3(weights=None, h=width, w=height)
     # model = DKMv3(weights=None, h=672, w=896)
@@ -336,8 +329,8 @@ if __name__ == '__main__':
 
     model = model.eval().to(device)
 
-    name0 = 'test'#'a1'
-    name1 = 'truth'#'a2'
+    name0 = 'test'
+    name1 = 'truth'
     postfix = '.png'
     image_dir = join('assets', 'demo')
     img_path0 = join(image_dir, name0 + postfix)
