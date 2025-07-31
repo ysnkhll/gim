@@ -423,28 +423,33 @@ if __name__ == '__main__':
     rectified_image0 = cv2.cvtColor(rectified_image0, cv2.COLOR_BGR2BGRA)
     rectified_image1 = cv2.cvtColor(rectified_image1, cv2.COLOR_BGR2BGRA)
 
-    alpha = 0.3  # 60% opacity for the overlay
-    result = cv2.addWeighted(rectified_image1, alpha, rectified_image0, 1 - alpha, 0)
-    cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), result)
+    # alpha = 0.3  # 60% opacity for the overlay
+    # result = cv2.addWeighted(rectified_image1, alpha, rectified_image0, 1 - alpha, 0)
+    # cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), result)
 
-# Streamlit Image-Comparison Component Example
-
-    import streamlit as st
-    from streamlit_image_comparison import image_comparison
-
-    # set page config
-    st.set_page_config(page_title="Image-Comparison Example", layout="wide")
-    st.initial_sidebar_state = None
-
+    #lat": 33.79897090354122, "lng": -117.8842594886441
+    lat = 33.79897090354122
+    lon = -117.8842594886441
+    
     test_img = cv2.cvtColor(cv2.imread(join(image_dir, "test.png")), cv2.COLOR_BGR2RGB)
     truth_img = cv2.cvtColor(cv2.imread(join(image_dir, "truth.png")), cv2.COLOR_BGR2RGB)
 
     test_warp_img = cv2.cvtColor(rectified_image0, cv2.COLOR_BGR2RGB)
     truth_warp_img = cv2.cvtColor(rectified_image1, cv2.COLOR_BGR2RGB)
 
-    # st.image(truth_img)
+    # data['mkpts0_f']
+    # data['mkpts1_f']
 
-    col1, col2 = st.columns([0.5, 0.5], gap="small", vertical_alignment ="center")
+    # Streamlit Image-Comparison Component Example
+    import streamlit as st
+    from streamlit.components.v1 import html
+    from streamlit_image_comparison import image_comparison
+
+    # set page config
+    st.initial_sidebar_state = None
+    st.set_page_config(page_title="Image-Comparison Example", layout="wide")
+
+    col1, col2 = st.columns(2, gap="small", vertical_alignment="center")
 
     with col1:
         st.header("Before")
@@ -452,6 +457,13 @@ if __name__ == '__main__':
         image_comparison(
             img1=test_img,
             img2=truth_img,
+            label1="text1",
+            label2="text1",
+            width=704,
+            starting_position=50,
+            show_labels=True,
+            make_responsive=True,
+            in_memory=True,
         )
 
     with col2:
@@ -460,7 +472,44 @@ if __name__ == '__main__':
         image_comparison(
             img1=test_warp_img,
             img2=truth_warp_img,
+            label1="text1",
+            label2="text1",
+            width=704,
+            starting_position=50,
+            show_labels=True,
+            make_responsive=True,
+            in_memory=True,
         )
+
+    # import pandas as pd
+    # df = pd.DataFrame(
+    #     # np.random.randn(2, 2) / [100, 100] + [lat, lon],
+    #     (lat, lon),
+    #     columns=["lat", "lon"])
+    d = {'lat': [lat], 'lon': [lon]}
+    st.map(data=d, latitude=lat, longitude=lon, color="#0044ff", size=10, zoom=15, use_container_width=True, width=None, height=None)
+
+    # Remove the annoying watermark.
+    html(
+        f"""
+            <script>
+                window.onload = function() {{
+                    var iframes = window.parent.document.getElementsByClassName("stIFrame");
+                    for (let i = 0; i < iframes.length; i++) {{
+                        if (iframes.item(i).contentDocument.getElementsByClassName("jx-knightlab").length > 0) {{
+                            iframes.item(i).contentDocument.getElementsByClassName("jx-knightlab").item(0).remove();
+                        }} else {{
+                            iframes.item(i).onload = function() {{
+                                if (this.contentDocument.getElementsByClassName("jx-knightlab").length > 0) {{
+                                    this.contentDocument.getElementsByClassName("jx-knightlab").item(0).remove();
+                                }};
+                            }};
+                        }};
+                    }};
+                }};
+            </script>
+        """
+    )
 
 
     # st.write(
@@ -468,6 +517,8 @@ if __name__ == '__main__':
     #     This demo shows how the Graph Nueral Network Transformer Models `EXAMPLE TEXT` to visualize a something.
     #     asdasd asd as d sad (http://data.un.org/Explorer.aspx).
     #     """
-    # )
+    # )		delete slider.labCreditdocument.getElementById("foo").querySelector("a.jx-knightlab").remove()
+                    # document.getElementsByClassName("jx-knightlab").item(0).remove();
+                    #document.getElementsByClassName("stIFrame")[0].contentDocument.getElementsByClassName("jx-knightlab").item(0).remove()
 
-    #lat": 33.79897090354122, "lng": -117.8842594886441
+    

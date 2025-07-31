@@ -1,0 +1,12 @@
+[client]
+showErrorDetails = "full"
+toolbarMode = "minimal"
+showSidebarNavigation = false
+
+[server]
+headless = true
+showEmailPrompt = false
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
