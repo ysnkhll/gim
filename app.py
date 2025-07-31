@@ -427,4 +427,47 @@ if __name__ == '__main__':
     result = cv2.addWeighted(rectified_image1, alpha, rectified_image0, 1 - alpha, 0)
     cv2.imwrite(join(image_dir, f'{name0}_{name1}_warp_overlay.png'), result)
 
+# Streamlit Image-Comparison Component Example
+
+    import streamlit as st
+    from streamlit_image_comparison import image_comparison
+
+    # set page config
+    st.set_page_config(page_title="Image-Comparison Example", layout="wide")
+    st.initial_sidebar_state = None
+
+    test_img = cv2.cvtColor(cv2.imread(join(image_dir, "test.png")), cv2.COLOR_BGR2RGB)
+    truth_img = cv2.cvtColor(cv2.imread(join(image_dir, "truth.png")), cv2.COLOR_BGR2RGB)
+
+    test_warp_img = cv2.cvtColor(rectified_image0, cv2.COLOR_BGR2RGB)
+    truth_warp_img = cv2.cvtColor(rectified_image1, cv2.COLOR_BGR2RGB)
+
+    # st.image(truth_img)
+
+    col1, col2 = st.columns([0.5, 0.5], gap="small", vertical_alignment ="center")
+
+    with col1:
+        st.header("Before")
+        # render image-comparison
+        image_comparison(
+            img1=test_img,
+            img2=truth_img,
+        )
+
+    with col2:
+        st.header("After")
+        # render image-comparison
+        image_comparison(
+            img1=test_warp_img,
+            img2=truth_warp_img,
+        )
+
+
+    # st.write(
+    #     """
+    #     This demo shows how the Graph Nueral Network Transformer Models `EXAMPLE TEXT` to visualize a something.
+    #     asdasd asd as d sad (http://data.un.org/Explorer.aspx).
+    #     """
+    # )
+
     #lat": 33.79897090354122, "lng": -117.8842594886441
